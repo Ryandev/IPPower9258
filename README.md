@@ -24,5 +24,5 @@ ipPower.state[3]
 
 ## License
 
-This is free software; you can redistribute and/or modify it under the terms of the MIT Licence. See the COPYING file for more information.
+This is free software; you can redistribute and/or modify it under the terms of the MIT Licence. See the LICENSE file for more information.
 
