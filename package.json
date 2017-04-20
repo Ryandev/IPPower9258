@@ -1,5 +1,5 @@
 {
-  "name": "ippower-9258",
+  "name": "IPPower9258",
   "version": "1.0.0",
   "description": "library to communicate with IPPower9258 devices",
   "main": "index.js",
@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "jsdom": "^9.12.0",
     "request": "^2.81.0"
