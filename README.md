@@ -7,7 +7,7 @@ Library to control IPPower9258 devices
 ## Example
 
 ```javascript
-var IPPower9258 = require('IPPower9258');
+var IPPower9258 = require('ippower9258');
 var ipPower = new IPPower9258()
 ipPower.config.ipAddress = '192.168.0.101';
 

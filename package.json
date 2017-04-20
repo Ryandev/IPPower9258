@@ -1,5 +1,5 @@
 {
-  "name": "IPPower9258",
+  "name": "ippower9258",
   "version": "1.0.0",
   "description": "library to communicate with IPPower9258 devices",
   "main": "index.js",
