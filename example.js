@@ -2,33 +2,38 @@ var IPPower9258 = require('./index.js');
 
 var ipPower = new IPPower9258()
 
-ipPower.config.ipAddress = '192.168.0.101';
+ipPower.config.ipAddress = '192.168.0.11';
 
-console.log('Fetching state');
+console.log('Fetching state\n\n');
 
+ipPower.fetchState(function(){
+	ipPower.state[1] = true
 
-ipPower.powerCycle(0,5)
+	console.log({'state':ipPower.state})
 
-setTimeout(function(){
+	ipPower.powerCycle(1,5)
 
-	ipPower.fetchState(function(){
-		console.log('Fetched state')
+	setTimeout(function(){
 
-		console.log(JSON.stringify(ipPower.state));
+		ipPower.fetchState(function(){
+			console.log('Fetched state')
+
+			console.log(JSON.stringify(ipPower.state));
 	
-		ipPower.updateState([false,false,false,false],function(){
-			console.log('New state: ' + JSON.stringify(ipPower.state));
-			ipPower.fetchState(function(){
-				console.log('2.New state: ' + JSON.stringify(ipPower.state));
+			ipPower.updateState([false,false,false,false],function(){
+				console.log('New state: ' + JSON.stringify(ipPower.state));
+				ipPower.fetchState(function(){
+					console.log('2.New state: ' + JSON.stringify(ipPower.state));
 
-				ipPower.state[0] = true
+					ipPower.state[1] = true
 			
-				setTimeout(function(){
-					console.log('3.New state: ' + JSON.stringify(ipPower.state));
-					ipPower.state[0] = false
-				},2000);
+					setTimeout(function(){
+						console.log('3.New state: ' + JSON.stringify(ipPower.state));
+						ipPower.state[1] = false
+					},2000);
+				});
 			});
 		});
-	});
 
-}, 6000);
+	}, 6000);
+});

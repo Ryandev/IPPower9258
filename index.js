@@ -4,22 +4,6 @@ var jsdom = require("jsdom");
 var _triggerUpdateStateOnChange = true
 
 function IPPower9258() {
-    this.state = [false,false,false,false];
-    this.config = {
-		headers: {
-			'Accept' : 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-			'Accept-Encoding': 'gzip, deflate',
-			'Accept-Language': 'en-US,en;q=0.8',
-			'Upgrade-Insecure-Requests' : 1,
-			'Connection': 'keep-alive',
-			'Content-Type': 'text/plain',
-			'User-Agent': 'Mozilla/5.0 (iPad; CPU OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1',
-		},
-		ipAddress: '192.168.1.100',
-		userName: 'admin',
-		password: '12345678',
-    }
-	
 	var self = this;
 	
 	this.updateState = function(newState, cb) {
@@ -81,7 +65,7 @@ function IPPower9258() {
 		var state = self.state
 		state[portNumber] = false
 		
-		var delayState = [false,false,false,false]
+		var delayState = state.slice()
 		delayState[portNumber] = true
 		
 		var delaySeconds = [0,0,0,0]
@@ -138,19 +122,51 @@ function IPPower9258() {
 		});
 	}
 	
-	Object.observe(self.state, function(changes) {
-	    if ( _triggerUpdateStateOnChange ) {
-			self.updateState(self.state);
-		} else {
-		    console.log('ignoring state change');
-		}
-	})
+    var _defaultConfig = {
+		headers: {
+			'Accept' : 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+			'Accept-Encoding': 'gzip, deflate',
+			'Accept-Language': 'en-US,en;q=0.8',
+			'Upgrade-Insecure-Requests' : 1,
+			'Connection': 'keep-alive',
+			'Content-Type': 'text/plain',
+			'User-Agent': 'Mozilla/5.0 (iPad; CPU OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1',
+		},
+		ipAddress: '192.168.1.100',
+		userName: 'admin',
+		password: '12345678',
+    };
 	
-	Object.observe(self.config, function(changes) {
-	    var cookie = self.userName+'='+self.password+'; Taifatech=yes';
-		self.config.headers['Cookie'] = cookie
-		self.config.headers['Host'] = self.ipAddress;
-	})
+	self.config = new Proxy(_defaultConfig, {
+		get: function(target, prop) {
+			return Reflect.get(target, prop);
+		},
+		set: function(target, prop, value) {
+			var cookie = target.userName+'='+target.password+'; Taifatech=yes';
+			target.headers['Cookie'] = cookie
+			target.headers['Host'] = self.ipAddress;
+			return Reflect.set(target, prop, value);
+		}
+	});
+	
+    var _defaultState = [false,false,false,false];
+	
+	self.state = new Proxy(_defaultState, {
+		get: function(target, prop) {
+			var getReturn = Reflect.get(target, prop);
+			return getReturn
+		},
+		set: function(target, prop, value) {
+		    var setReturn = Reflect.set(target, prop, value);
+
+			if ( _triggerUpdateStateOnChange ) {
+				self.updateState(self.state);
+			} else {
+				console.log('ignoring state change');
+			}
+			return setReturn;
+		}
+	});
 }
 
 module.exports = IPPower9258
